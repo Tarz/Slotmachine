@@ -5,14 +5,20 @@ var SMButton = cc.Sprite.extend({
     ctor: function() {
         
         this._super();
-        
         this.initWithFile(res.button_png);
     },
-    
-    setMouseListener: function(reelManager, hud) {
+
+    onEnter: function() {
+
+        this._super();
 
         // listen counter (has updated)
         cc.eventManager.addCustomListener("counter_has_updated", this.resumeMouseListener.bind(this));
+        
+        this.setMouseListener();
+    },
+    
+    setMouseListener: function() {
 
         var button = this;
 
@@ -30,14 +36,11 @@ var SMButton = cc.Sprite.extend({
                 if (cc.rectContainsPoint(targetRectangle, location)) {
                     
                     cc.eventManager.pauseTarget(button);
+                    cc.eventManager.dispatchCustomEvent("button_has_pressed");
                     
-                    hud.resetCounter();
-                    reelManager.startAnimation();
                     button.setOpacity(g_buttonInactiveOpacity);
                 }
-                
             }
-        
         });
 
        cc.eventManager.addListener(this.mouseListener, this);

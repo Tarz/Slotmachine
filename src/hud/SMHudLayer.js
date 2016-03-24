@@ -29,21 +29,4 @@ var SMHudLayer = cc.Layer.extend({
         this.counter.setPosition(g_counterXpos, g_counterYpos);
         this.addChild(this.counter);
     },
-
-    addButtonListener: function(reelManager) {
-        
-        this.button.setMouseListener(reelManager, this); // add to button touch listener
-    },
-
-    activateCounter: function(winAmount) {
-        
-        this.counter.startCounting(winAmount);
-    }, 
-
-    // Reset counter after click
-    resetCounter: function() {
-        
-        this.counter.reset();
-    }
-
 });

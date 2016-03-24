@@ -61,12 +61,12 @@ var SMReel = cc.Sprite.extend({
         this.glass = cc.Sprite.create(res.reel_png);
         this.glass.setPosition(0, 0);
         this.addChild(this.glass);
-
     },
 
     /* 
         ANIMATE
     */
+   
    // START REELCONTENT ANIMATION
    startMainAnimation: function(seconds) {
         
@@ -75,13 +75,8 @@ var SMReel = cc.Sprite.extend({
         cc.eventManager.addCustomListener("reel_has_spinned_" + this.index, this.listenReel.bind(this));
         
         this.schedule(this.animateMain, 0, cc.kCCRepeatForever, 0); // main animation
-        this.schedule(this.addReelFriction, seconds-1, 1, 0);   // after seconds-1 add friction
-        this.schedule(this.brakeMainAnimation, seconds, 1, 0);  // give a signal to reelContent to start the suspension
-    },
-
-    timertest: function() {
-        console.log("timertest");
-        this.unschedule(this.timertest);
+        this.schedule(this.addReelFriction, seconds-1, 1, 0);       // after seconds-1 add friction
+        this.schedule(this.brakeMainAnimation, seconds, 1, 0);      // give a signal to reelContent to start the suspension
     },
 
     // UPDATE REELCONTENT Y POSITION
@@ -92,13 +87,15 @@ var SMReel = cc.Sprite.extend({
     
     // Slow down reel spin 1000ms before animation ends
     addReelFriction: function() {
+        
         this.unschedule(this.addReelFriction);
         this.reel.addFriction();
     },
 
     // Start the suspension
     brakeMainAnimation: function() {
-        this.unschedule(this. brakeMainAnimations);
+        
+        this.unschedule(this.brakeMainAnimations);
         this.reel.brakeAnimation();
     },
 

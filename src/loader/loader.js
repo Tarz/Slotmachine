@@ -64,7 +64,8 @@ var SlotMachinePreloader = cc.Scene.extend({
     waitVisuals: function(dt) {
     	
     	if(this.countVisuals === 3) {
-    		this.unschedule(this.waitVisuals);
+    		
+            this.unschedule(this.waitVisuals);
     		this.startLoading();
     	}
     },
@@ -74,16 +75,21 @@ var SlotMachinePreloader = cc.Scene.extend({
     	var preloader = this;
     	
     	cc.loader.load(this.resources, function(result, count, loadedCount) {
-        	var scale = loadedCount/count;
+        	
+            var scale = loadedCount/count;
         	var percent = Math.round(scale*100);
 
         	preloader.progressBar.scaleX = scale;
         	preloader.counter.setString(percent + "%");
         
         }, function(){
-        	preloader.counter.setString(100 + "%");
+        	
+            preloader.counter.setString(100 + "%");
         	preloader.progressBar.scaleX = 1;
-        	preloader.preloaded();
+        	
+            // Delay to show 100% visuals
+            preloader.schedule(preloader.preloaded, .30, 1, 0);
+            //preloader.preloaded();
         });
     }, 
 
@@ -95,6 +101,8 @@ var SlotMachinePreloader = cc.Scene.extend({
 	},
 
     preloaded: function() {
+        console.log("PRELOADED")
+        this.unschedule(this.preloaded);
     	this.cb();
     },
 

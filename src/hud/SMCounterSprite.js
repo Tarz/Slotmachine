@@ -23,8 +23,15 @@ var SMCounter = cc.Sprite.extend({
 
         this._super();
         
+        this.addListeners();
         this.createBg();
         this.createCounter();
+    },
+
+    addListeners: function() {
+        
+        cc.eventManager.addCustomListener("all_reels_are_spinned", this.startCounting.bind(this));
+        cc.eventManager.addCustomListener("button_has_pressed", this.reset.bind(this));
     },
 
     createBg: function() {
@@ -51,24 +58,7 @@ var SMCounter = cc.Sprite.extend({
         
         this.counter.setPosition(this.bgWidth - (this.counter.width * .5) - 10, this.halfH);
     },
-
-    startCounting: function(winAmount) {
-        
-        if(winAmount == 0) {
-            
-            cc.eventManager.dispatchCustomEvent("counter_has_updated");
-            return;
-        }
-        
-        this.winAmount = winAmount;
-        this.score = 0;
-        this.addAmount = Math.round(winAmount * cc.director.getAnimationInterval()); // calculate add amount..
-                                                                                     // ..Animation duration should not be exeeding 1 second. 
-        this.schedule(this.animate, 0, cc.kCCRepeatForever, 0);
-
-        cc.audioEngine.playEffect(res.coins_sfx, true);
-    },
-
+    
     animate: function(dt) {
         
         this.score = Math.min(this.score + this.addAmount, this.winAmount);
@@ -85,7 +75,28 @@ var SMCounter = cc.Sprite.extend({
 
     },
 
-    reset: function() {
+    /* EVENTLISTENERS */
+    
+    startCounting: function(event) {
+        
+        var winAmount = event.getUserData();
+
+        if(winAmount == 0) {
+            
+            cc.eventManager.dispatchCustomEvent("counter_has_updated");
+            return;
+        }
+        
+        this.winAmount = winAmount;
+        this.score = 0;
+        this.addAmount = Math.round(winAmount * cc.director.getAnimationInterval()); // calculate add amount..
+                                                                                     // ..Animation duration should not be exeeding 1 second. 
+        this.schedule(this.animate, 0, cc.kCCRepeatForever, 0);
+
+        cc.audioEngine.playEffect(res.coins_sfx, true);
+    },
+
+    reset: function(event) {
         
         this.updateCounter(0);
     } 

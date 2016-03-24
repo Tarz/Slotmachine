@@ -116,6 +116,7 @@ var SMReelContent = cc.Sprite.extend({
         // create sprite from random symbol name and add it to the reel
         var symbol = cc.Sprite.create(symbolName);
         
+        // hide symbol
         symbol.setPosition(-10000, 0);
         symbol.setVisible(false);
         
@@ -130,8 +131,10 @@ var SMReelContent = cc.Sprite.extend({
 
         for(var i = this.nextSymbolIndex; i>=0; i--) {
 
+            // show symbol
             this.symbols[i].setPosition(0, this.reelBgHeightH - (i * this.symbolHeight) + this.offset);
             this.symbols[i].setVisible(true);
+            
             this.displayList.push(this.symbols[i]);
         }
     },
@@ -258,12 +261,8 @@ var SMReelContent = cc.Sprite.extend({
         setTimeout(this.waitSoundEffectStops.bind(this), 300);
        
     },
-
+    
     waitSoundEffectStops: function() {
         cc.eventManager.dispatchCustomEvent("reel_has_spinned", Number(this.data[this.spinCount]["win"]));
-    },
-    
-    getWinAmount: function() {
-        return this.data[this.spinCount]["win"];
     }
 });

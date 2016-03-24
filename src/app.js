@@ -23,13 +23,5 @@ var SlotMachineScene = cc.Scene.extend({
         this.hudLayer.init(this);
         this.addChild(this.hudLayer);
         this.hudLayer.bake();
-
-        // make the button became aware about SMReelManager
-        this.hudLayer.addButtonListener(reelManager);
-    },
-
-    activateCounter: function(winAmount) {
-        this.hudLayer.activateCounter(winAmount);
     }
-
 });

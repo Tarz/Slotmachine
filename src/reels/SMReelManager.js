@@ -30,24 +30,29 @@ var SMReelManager = cc.Layer.extend({
 
         this.reelsStopped = 0;                      // count reels whos animation has suspended
 
-        var that = this;
+        var reelManager = this;
+        
         cc.loader.loadJson("res/results.json", function(error,data){
         
             if(error) {
                 console.log(error.errorMessage);
             } else {
-                that.createReels(data["machine-state"]);
+                reelManager.addListeners();
+                reelManager.createReels(data["machine-state"]);
             }
         });
 
         
     },
 
+    addListeners: function() {
+        cc.eventManager.addCustomListener("reel_has_spinned", this.listenReels.bind(this));
+        cc.eventManager.addCustomListener("button_has_pressed", this.startAnimation.bind(this));
+    },
+
     createReels: function(data) {
         
         var reel;
-        
-        cc.eventManager.addCustomListener("reel_has_spinned", this.listenReels.bind(this));
         
         for (var i = 0; i < this.reelsCount; i++) {
             
@@ -67,23 +72,19 @@ var SMReelManager = cc.Layer.extend({
         }
     },
 
-    // Listen reel animation has suspended
+    /* EVENTLISTENERS */
+    
+    // Reel animation has suspended
     listenReels: function(event) {
 
         this.reelsStopped++;
 
         if(this.reelsStopped == this.reelsCount) {
             
-            this.activateCounter(event.getUserData());
+            cc.eventManager.dispatchCustomEvent("all_reels_are_spinned", event.getUserData());
         }
     },
-
-    // Count win amount
-    activateCounter: function(winAmount) {
-
-        this.scene.activateCounter(winAmount);
-    },
-
+    
     // Starting reels animation
     startAnimation: function() {
         
