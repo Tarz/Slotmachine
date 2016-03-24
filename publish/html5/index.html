@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Slotmachine</title>
+    <meta name="viewport" content="initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="full-screen" content="yes" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="360-fullscreen" content="true" />
+    
+    <style>
+    body,
+    canvas,
+    div {
+        padding:0; 
+        margin: 0; 
+        background: #fff;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        -khtml-user-select: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+    body {
+        text-align: center;
+    }
+    #container {
+        display:inline-block;
+        width:auto;
+        margin: 0 auto; 
+        margin-top: 50px;
+        background: #fff; 
+        position:relative;
+        border:5px solid #fff; 
+        border-radius: 10px; 
+        box-shadow: 40px 40px 100px #333;
+    }
+    canvas {
+        border-radius: 10px;
+    }
+   </style>
+</head>
+
+<body>
+    <div id="container">
+        <canvas id="gameCanvas" width="668" height="436">Sorry, Your browser does not support the canvas tag</canvas>
+    </div>
+    
+    <script>
+        (function() {
+            var nav = window.navigator;
+            var ua = nav.userAgent.toLowerCase();
+            var uaResult = /android (\d+(?:\.\d+)+)/i.exec(ua) || /android (\d+(?:\.\d+)+)/i.exec(nav.platform);
+            if (uaResult) {
+                var osVersion = parseInt(uaResult[1]) || 0;
+                var browserCheck = ua.match(/(qzone|micromessenger|qqbrowser)/i);
+                if (browserCheck) {
+                    var gameCanvas = document.getElementById("gameCanvas");
+                    var ctx = gameCanvas.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, 0, 1);
+                }
+            }
+        })();
+    </script>
+    
+    <script cocos src="game.min.js"></script>
+</body>
+</html>

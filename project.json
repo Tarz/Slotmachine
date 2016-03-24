@@ -1,0 +1,28 @@
+{
+    "project_type": "javascript",
+
+    "debugMode" : 0,
+    "showFPS" : false,
+    "frameRate" : 60,
+    "noCache" : true,
+    "id" : "gameCanvas",
+    "renderMode" : 1,
+    "engineDir":"frameworks/cocos2d-html5",
+
+    "modules" : ["cocos2d"],
+
+    "jsList" : [
+        "src/resource.js",
+        "src/globals.js",
+        "src/loader/loader.js",
+        "src/app.js",
+        "src/bg/SMBackgroundLayer.js",
+        "src/reels/SMReelManager.js",
+        "src/reels/SMReelSprite.js",
+        "src/reels/SMReelContent.js",
+        "src/hud/SMHudLayer.js",
+        "src/hud/SMButtonSprite.js",
+        "src/hud/SMCounterSprite.js",
+        "src/utils/utils.js"
+    ]
+}
