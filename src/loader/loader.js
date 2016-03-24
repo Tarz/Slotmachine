@@ -101,7 +101,7 @@ var SlotMachinePreloader = cc.Scene.extend({
 	},
 
     preloaded: function() {
-        console.log("PRELOADED")
+        
         this.unschedule(this.preloaded);
     	this.cb();
     },
