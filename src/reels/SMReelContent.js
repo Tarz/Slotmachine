@@ -138,18 +138,20 @@ var SMReelContent = cc.Sprite.extend({
             this.displayList.push(this.symbols[i]);
         }
     },
-
- 	animate: function(dt) {
+    
+    animate: function(dt) {
 
         if (!this.isAnimation) return;
         
-        var symbol, ypos;
+        this.speed = Math.max(this.friction * this.speed, 100);
+        
+        var symbol, ypos, dtSpeed = this.speed * dt;
         
         for(var i = 0, len = this.displayList.length; i < len; i++) {
             
             symbol = this.displayList[i];
-            this.speed = Math.max(this.friction*this.speed, 100);
-            ypos = symbol.y - (this.speed * dt);
+            
+            ypos = symbol.y - dtSpeed;
             
             this.checkConditions(symbol, ypos);
 
@@ -166,7 +168,6 @@ var SMReelContent = cc.Sprite.extend({
             } 
 
             symbol.y = ypos;
-              
         }
     },
 
