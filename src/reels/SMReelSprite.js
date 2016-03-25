@@ -1,6 +1,6 @@
 /* SMREELSPRITE */
 
-var SMReel = cc.Sprite.extend({
+var SMReel = cc.Node.extend({
 
     ctor: function(index, data) {
 

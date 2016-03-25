@@ -37,23 +37,22 @@ var SMReelContent = cc.Sprite.extend({
                                                              // This is third slot position. Used for checking conditions.. 
                                                              // ..to stop animation in right place (symbol.name = "stopSymbol").
         
-        // loaded symbols
-        this.reelSymbolNames = [
-            res.h1_png, res.h2_png, res.h3_png, res.h4_png, res.l1_png, res.l2_png, res.l3_png, res.l4_png, res.wild_png
-        ];
-
-        // translate keys from json file to loaded symbols
+        // translate keys from json file to spritesheet names
         this.symbolDictionary = {
-            "H1": res.h1_png,
-            "H2": res.h2_png,
-            "H3": res.h3_png,
-            "H4": res.h4_png,
-            "L1": res.l1_png,
-            "L2": res.l2_png,
-            "L3": res.l3_png,
-            "L4": res.l4_png,
-            "WILD": res.wild_png
+            "H1": "h1.png",
+            "H2": "h2.png",
+            "H3": "h3.png",
+            "H4": "h4.png",
+            "L1": "l1.png",
+            "L2": "l2.png",
+            "L3": "l3.png",
+            "L4": "l4.png",
+            "WILD": "wild.png"
         }
+
+        this.symbolDictKeys = Object.keys(this.symbolDictionary);   // symbolDictionary keys
+        this.symbolNamesLength = this.symbolDictKeys.length;        // symbolDictionary length
+
         
         this.symbols = [];          // collect all sprites (default 20)
         this.displayList = [];      // collect visible sprites (4)
@@ -63,6 +62,10 @@ var SMReelContent = cc.Sprite.extend({
         
         this.nextSymbolIndex  = 3;  // get next symbol from this.symbols and unsift it to this.displayList
         
+        this.hideAct = cc.Hide.create();
+        this.showAct = cc.Show.create();
+        
+        cc.spriteFrameCache.addSpriteFrames(res.sheet_plist, res.sheet_png);
         
         this.createContent();
         this.prepare();
@@ -85,13 +88,14 @@ var SMReelContent = cc.Sprite.extend({
         
         for(var i = 0, len = this.symbols.length; i<len; i++) {
             
-            this.symbols[i].name = undefined; // set "stopSymbol" to undefined
+            this.symbols[i].stopSymbol = false; // set "stopSymbol" to undefined
 
             // set all symbols to random  except visible symbols in displayList 
             if(this.displayList.indexOf(this.symbols[i]) == -1) {
-
-                symbolName = this.reelSymbolNames[randomMinMax(0, this.reelSymbolNames.length - 1)];
-                this.symbols[i].initWithFile(symbolName);   
+                
+                // get random symbol name
+                symbolName = this.symbolDictionary[this.symbolDictKeys[randomMinMax(0, this.symbolNamesLength - 1)]];
+                this.symbols[i].setDisplayFrame(cc.spriteFrameCache.getSpriteFrame(symbolName));  
             }
         }
         
@@ -105,7 +109,7 @@ var SMReelContent = cc.Sprite.extend({
         for (var i = 0, len = this.symbolCount; i < len; i++) {
 
             // get random symbol name
-            symbolName = this.reelSymbolNames[randomMinMax(0, this.reelSymbolNames.length - 1)];
+            symbolName = this.symbolDictionary[this.symbolDictKeys[randomMinMax(0, this.symbolNamesLength - 1)]];
             
             this.createSymbol(symbolName, i);
         }
@@ -114,12 +118,12 @@ var SMReelContent = cc.Sprite.extend({
     createSymbol: function(symbolName, i) {
         
         // create sprite from random symbol name and add it to the reel
-        var symbol = cc.Sprite.create(symbolName);
+        var symbol = cc.Sprite.create(cc.spriteFrameCache.getSpriteFrame(symbolName));
         
         // hide symbol
         symbol.setPosition(-10000, 0);
-        symbol.setVisible(false);
         
+        symbol.runAction(this.hideAct.clone());
         this.addChild(symbol);
         
         // collect symbol 
@@ -133,8 +137,7 @@ var SMReelContent = cc.Sprite.extend({
 
             // show symbol
             this.symbols[i].setPosition(0, this.reelBgHeightH - (i * this.symbolHeight) + this.offset);
-            this.symbols[i].setVisible(true);
-            
+            this.symbols[i].runAction(this.showAct.clone());
             this.displayList.push(this.symbols[i]);
         }
     },
@@ -156,7 +159,7 @@ var SMReelContent = cc.Sprite.extend({
             this.checkConditions(symbol, ypos);
 
             // when animation time is out and "stopSymbol" in displayList check it y position
-            if(this.brake && symbol.name == "stopSymbol") {
+            if(this.brake && symbol.stopSymbol) {
                 
                 if(ypos <= this.endPosition) {
                     
@@ -169,6 +172,8 @@ var SMReelContent = cc.Sprite.extend({
 
             symbol.y = ypos;
         }
+
+        
     },
 
     // Infinite scroll
@@ -179,7 +184,7 @@ var SMReelContent = cc.Sprite.extend({
 
             // Remove current symbol
             symbol.x = -1000;
-            symbol.setVisible(false);
+            symbol.runAction(this.hideAct.clone())
             this.displayList.pop();
             
             // Decrementing index
@@ -195,7 +200,7 @@ var SMReelContent = cc.Sprite.extend({
             this.displayList.unshift(nextSymbol);
 
             // Set position above to first symbol
-            nextSymbol.setVisible(true); 
+            nextSymbol.runAction(this.showAct.clone());
             nextSymbol.y = this.displayList[1].y + this.symbolHeight;
             nextSymbol.x = 0;
         }   
@@ -230,14 +235,14 @@ var SMReelContent = cc.Sprite.extend({
         var index;
         
         index = this.getCorrectIndex(this.nextSymbolIndex - 3);
-        this.symbols[index].initWithFile(this.symbolDictionary[resultSymbolArray[2]]);
-        this.symbols[index].name = "stopSymbol";
+        this.symbols[index].setDisplayFrame(cc.spriteFrameCache.getSpriteFrame(this.symbolDictionary[resultSymbolArray[2]]));
+        this.symbols[index].stopSymbol = true;
         
         index = this.getCorrectIndex(this.nextSymbolIndex - 4);
-        this.symbols[index].initWithFile(this.symbolDictionary[resultSymbolArray[1]]);
+        this.symbols[index].setDisplayFrame(cc.spriteFrameCache.getSpriteFrame(this.symbolDictionary[resultSymbolArray[1]]));
         
         index = this.getCorrectIndex(this.nextSymbolIndex - 5);
-        this.symbols[index].initWithFile(this.symbolDictionary[resultSymbolArray[0]]);
+        this.symbols[index].setDisplayFrame(cc.spriteFrameCache.getSpriteFrame(this.symbolDictionary[resultSymbolArray[0]]));
     },
 
     // helper method, infinite traversing in this.symbols
