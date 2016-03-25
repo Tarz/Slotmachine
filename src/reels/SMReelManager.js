@@ -41,8 +41,6 @@ var SMReelManager = cc.Layer.extend({
                 reelManager.createReels(data["machine-state"]);
             }
         });
-
-        
     },
 
     addListeners: function() {

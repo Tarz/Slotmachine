@@ -21,6 +21,7 @@ var SMReel = cc.Node.extend({
     onEnter: function() {
 
         this._super();
+        
         this.createBg();
         this.createReelContentWithMask();
         this.createGlass();
@@ -43,13 +44,15 @@ var SMReel = cc.Node.extend({
         // create reel content
         this.reel = new SMReelContent(this.index, this.data);
         
+        //this.addChild(this.reel);
+        
         //Mask
         var mask = cc.DrawNode.create();
         mask.drawRect(cc.p(-this.reelBgHalfW, -this.reelBgHalfH), cc.p(this.reelBgHalfW, this.reelBgHalfH));
-       
+        
         // ClippingNode
         var maskedFill = new cc.ClippingNode(mask);
-       
+        
         // MaskedFill
         maskedFill.addChild(this.reel);
         this.addChild(maskedFill);
@@ -59,7 +62,6 @@ var SMReel = cc.Node.extend({
     createGlass: function() {
 
         this.glass = cc.Sprite.create(res.reel_png);
-        this.glass.setPosition(0, 0);
         this.addChild(this.glass);
     },
 
@@ -75,8 +77,8 @@ var SMReel = cc.Node.extend({
         cc.eventManager.addCustomListener("reel_has_spinned_" + this.index, this.listenReel.bind(this));
         
         this.schedule(this.animateMain, 0, cc.kCCRepeatForever, 0); // main animation
-        this.schedule(this.addReelFriction, seconds-1, 1, 0);       // after seconds-1 add friction
-        this.schedule(this.brakeMainAnimation, seconds, 1, 0);      // give a signal to reelContent to start the suspension
+        this.scheduleOnce( this.addReelFriction, seconds-1 );         // after seconds-1 add friction
+        this.scheduleOnce( this.brakeMainAnimation, seconds );        // give a signal to reelContent to start the suspension  
     },
 
     // UPDATE REELCONTENT Y POSITION
@@ -88,14 +90,12 @@ var SMReel = cc.Node.extend({
     // Slow down reel spin 1000ms before animation ends
     addReelFriction: function() {
         
-        this.unschedule(this.addReelFriction);
         this.reel.addFriction();
     },
 
     // Start the suspension
     brakeMainAnimation: function() {
         
-        this.unschedule(this.brakeMainAnimations);
         this.reel.brakeAnimation();
     },
 

@@ -88,8 +88,7 @@ var SlotMachinePreloader = cc.Scene.extend({
         	preloader.progressBar.scaleX = 1;
         	
             // Little delay to show 100% visuals
-            preloader.schedule(preloader.preloaded, .30, 1, 0);
-            
+            preloader.scheduleOnce( preloader.preloaded, .3 );
         });
     }, 
 
@@ -101,9 +100,7 @@ var SlotMachinePreloader = cc.Scene.extend({
 	},
 
     preloaded: function() {
-        
-        this.unschedule(this.preloaded);
-    	this.cb();
+        this.cb();
     },
 
     onExit: function() {

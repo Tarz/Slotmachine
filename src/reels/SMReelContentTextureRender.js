@@ -1,6 +1,7 @@
 /* SMREELCONTENT */
 
 var SMReelContent = cc.Sprite.extend({
+//var SMReelContent = cc.SpriteBatchNode.extend({
     
     ctor: function(index, data) {
 
@@ -31,9 +32,10 @@ var SMReelContent = cc.Sprite.extend({
         this.reelBgHeightH = this.reelBgHeight * .5;
         
         this.symbolHeight = g_symbolHeight;
+        
         this.offset = g_reelsOffset;
         
-        this.swapPosition = -this.reelBgHeightH-this.offset; // y position for swapping
+        this.swapPosition = -this.reelBgHeightH + this.reelBgHeightH -this.offset; // y position for swapping
         this.endPosition =  -this.symbolHeight;              // y position for end of animation. 
                                                              // This is third slot position. Used for checking conditions.. 
                                                              // ..to stop animation in right place (symbol.name = "stopSymbol").
@@ -63,20 +65,27 @@ var SMReelContent = cc.Sprite.extend({
         
         this.nextSymbolIndex  = 3;  // get next symbol from this.symbols and unsift it to this.displayList
         
+        this.hideAct = cc.Hide.create();
     },
 
     onEnter: function() {
         
-        this._super();
-        
         cc.spriteFrameCache.addSpriteFrames(res.sheet_plist, res.sheet_png);
+        
+        // TEXTURE
+        this.renderTexture = new cc.RenderTexture(this.symbolHeight, this.reelBgHeight);
+        this.addChild(this.renderTexture);
+        
+        //this.renderTexture.setAutoDraw(true);
+        //this.renderTexture.clearFlags = cc._renderContext.COLOR_BUFFER_BIT;
+        
         this.createContent();
         this.prepare();
     },
 
     init: function() {
     	
-        // restore properties
+        // reset properties
         this.isAnimation = true;
    		this.brake = false; // If time is out then take last animation part 
         
@@ -86,6 +95,7 @@ var SMReelContent = cc.Sprite.extend({
         this.spinCount++;
         if(this.spinCount >= this.maxSpinCount) this.spinCount = 0;
 
+        // update reel symbols
         var symbolName;
         
         for(var i = 0, len = this.symbols.length; i<len; i++) {
@@ -121,10 +131,7 @@ var SMReelContent = cc.Sprite.extend({
         
         // create sprite from random symbol name and add it to the reel
         var symbol = cc.Sprite.create(cc.spriteFrameCache.getSpriteFrame(symbolName));
-        
-        // hide symbol
-        symbol.setVisible(false);
-        this.addChild(symbol);
+        symbol.anchorX = 0;
         
         // collect symbol 
         this.symbols.push(symbol);
@@ -132,23 +139,32 @@ var SMReelContent = cc.Sprite.extend({
     
     // prepare displayList
     prepare: function() {
+
+        // Start render
+        this.renderTexture.beginWithClear(0, 0, 0, 0);
         
         for(var i = this.nextSymbolIndex; i>=0; i--) {
 
-            // show symbol
-            this.symbols[i].setPosition(0, this.reelBgHeightH - (i * this.symbolHeight) + this.offset);
-            this.symbols[i].setVisible(true);
+            this.symbols[i].setPosition(0, this.reelBgHeight - (i * this.symbolHeight) + this.offset);
             this.displayList.push(this.symbols[i]);
+            this.symbols[i].visit();
         }
+        
+        // End render
+        this.renderTexture.end();
     },
     
     animate: function(dt) {
 
         if (!this.isAnimation) return;
         
-        this.speed = Math.max(this.friction * this.speed, 100);
         
+        this.speed = Math.max(this.friction * this.speed, 100);
+
         var symbol, ypos, dtSpeed = this.speed * dt;
+       
+        
+        this.renderTexture.beginWithClear(0, 0, 0, 0);
         
         for(var i = 0, len = this.displayList.length; i < len; i++) {
             
@@ -171,7 +187,11 @@ var SMReelContent = cc.Sprite.extend({
             } 
 
             symbol.y = ypos;
+            symbol.visit();
         }
+        
+        this.renderTexture.end();
+        
     },
 
     // Infinite scroll
@@ -181,8 +201,6 @@ var SMReelContent = cc.Sprite.extend({
         if(ypos <= this.swapPosition) {
 
             // Remove current symbol
-            
-            symbol.setVisible(false);
             this.displayList.pop();
             
             // Decrementing index
@@ -198,7 +216,6 @@ var SMReelContent = cc.Sprite.extend({
             this.displayList.unshift(nextSymbol);
 
             // Set position above to first symbol
-            nextSymbol.setVisible(true);
             nextSymbol.y = this.displayList[1].y + this.symbolHeight;
             
         }   
@@ -259,10 +276,11 @@ var SMReelContent = cc.Sprite.extend({
         // Stop all sfx's when this reel is last spinner
         if(this.index == g_reelsCount-1) cc.audioEngine.stopAllEffects();
         
+        // Play spinEnd sfx
         cc.audioEngine.playEffect(res.spinEnd_sfx, false);
         
         //wait when spinEnd sfx ends, then dispatch event to count win amount
-        this.scheduleOnce( this.waitSoundEffectStops, .3 );
+        setTimeout(this.waitSoundEffectStops.bind(this), 300);
        
     },
     

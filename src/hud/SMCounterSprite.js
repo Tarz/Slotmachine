@@ -89,8 +89,8 @@ var SMCounter = cc.Sprite.extend({
         
         this.winAmount = winAmount;
         this.score = 0;
-        this.addAmount = Math.round(winAmount * cc.director.getAnimationInterval()); // calculate add amount..
-                                                                                     // ..Animation duration should not be exeeding 1 second. 
+        this.addAmount = Math.round(winAmount * cc.director.getDeltaTime()); // calculate add amount..
+                                                                            // ..Animation duration should not be exeeding 1 second. 
         this.schedule(this.animate, 0, cc.kCCRepeatForever, 0);
 
         cc.audioEngine.playEffect(res.coins_sfx, true);

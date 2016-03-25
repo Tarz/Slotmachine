@@ -1,13 +1,13 @@
 var preloaderRes = {
-    bg_png: "res/gameplay/bg.png"
+     bg_png: "res/gameplay/bg.png"
     ,progBg_png: "res/loader/progress_bg.png"
     ,prog_png: "res/loader/progress_fill.png"
-}
+};
 
 var res = {
-    sheet_plist: "res/symbols/sheet.plist"
-    ,sheet_png: "res/symbols/sheet.png"
-    ,button_png: "res/gameplay/button.png"
+      sheet_plist: "res/symbols/sheet.plist"
+    , sheet_png: "res/symbols/sheet.png"
+    , button_png: "res/gameplay/button.png"
     , counter_png: "res/gameplay/counter.png"
     , reel_png: "res/gameplay/reel.png"
     , reelbg_png: "res/gameplay/reelbg.png"
