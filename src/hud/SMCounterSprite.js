@@ -36,7 +36,7 @@ var SMCounter = cc.Sprite.extend({
 
     createBg: function() {
 
-        var bg = cc.Sprite.create(res.counter_png);
+        var bg = cc.Sprite.create(cc.spriteFrameCache.getSpriteFrame("counter.png"));
         bg.setPosition(this.halfW, this.halfH)
         this.addChild(bg);
     },

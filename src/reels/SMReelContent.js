@@ -68,8 +68,6 @@ var SMReelContent = cc.Sprite.extend({
     onEnter: function() {
         
         this._super();
-        
-        cc.spriteFrameCache.addSpriteFrames(res.sheet_plist, res.sheet_png);
         this.createContent();
         this.prepare();
     },

@@ -54,6 +54,7 @@ var SMReelManager = cc.Layer.extend({
         
         for (var i = 0; i < this.reelsCount; i++) {
             
+            
             reel = new SMReel(i, data);
             
             reel.setPosition(
@@ -68,6 +69,8 @@ var SMReelManager = cc.Layer.extend({
             // collect reel
             this.reels.push(reel);
         }
+
+
     },
 
     /* EVENTLISTENERS */

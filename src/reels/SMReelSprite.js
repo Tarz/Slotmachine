@@ -8,20 +8,25 @@ var SMReel = cc.Node.extend({
         
         this.index = index;                                     
         
-        var reelBgWidth = g_reelBgWidth;                       // reel white bg width
-        this.reelBgHalfW = reelBgWidth * .5;
+        this.reelBgWidth = g_reelBgWidth;                       // reel white bg width
+        this.reelBgHalfW = this.reelBgWidth * .5;
 
         this.reelBgHeight = g_reelBgHeight;                     // reel white bg height
         this.reelBgHalfH = this.reelBgHeight * .5;
         
         this.data = data;       // data from json file
         this.reel = null;       // reel content collected to cc.Sprite
+
+        this.bg;
+        this.reel;
+        this.glass;
     },
 
     onEnter: function() {
 
         this._super();
         
+
         this.createBg();
         this.createReelContentWithMask();
         this.createGlass();
@@ -30,11 +35,11 @@ var SMReel = cc.Node.extend({
     /* 
         CREATE GRAPHICS
     */
-    
+   
     // CREATE REEL BACKGROUND
     createBg: function() {
 
-        this.bg = cc.Sprite.create(res.reelbg_png);
+        this.bg = cc.Sprite.create(cc.spriteFrameCache.getSpriteFrame("reelbg.png"));
         this.addChild(this.bg);
     },
 
@@ -43,15 +48,15 @@ var SMReel = cc.Node.extend({
 
         // create reel content
         this.reel = new SMReelContent(this.index, this.data);
-        
         //this.addChild(this.reel);
         
-        //Mask
-        var mask = cc.DrawNode.create();
-        mask.drawRect(cc.p(-this.reelBgHalfW, -this.reelBgHalfH), cc.p(this.reelBgHalfW, this.reelBgHalfH));
+        var white = cc.color(255, 255, 255, 255);
+        var stencil = cc.DrawNode.create();
+        stencil.drawRect(cc.p(-this.reelBgHalfW, -this.reelBgHalfH), cc.p(this.reelBgHalfW, this.reelBgHalfH), white, 1, white);
         
         // ClippingNode
-        var maskedFill = new cc.ClippingNode(mask);
+        var maskedFill = new cc.ClippingNode.create();
+        maskedFill.setStencil(stencil);
         
         // MaskedFill
         maskedFill.addChild(this.reel);
@@ -61,7 +66,7 @@ var SMReel = cc.Node.extend({
     // CREATE REEL GLASS (upper sprite for reels UI)
     createGlass: function() {
 
-        this.glass = cc.Sprite.create(res.reel_png);
+        this.glass = cc.Sprite.create(cc.spriteFrameCache.getSpriteFrame("reel.png"));
         this.addChild(this.glass);
     },
 

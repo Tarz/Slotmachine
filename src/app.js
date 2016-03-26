@@ -5,6 +5,8 @@ var SlotMachineScene = cc.Scene.extend({
     onEnter: function() {
 
         this._super();
+
+        cc.spriteFrameCache.addSpriteFrames(res.sheet_plist, res.sheet_png);
         
         // BACKGROUND
         var backgroundLayer = new SMBackgroundLayer();

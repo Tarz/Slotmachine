@@ -19,8 +19,8 @@ var SMBackgroundLayer = cc.Layer.extend({
         var bgTile;
         
         for (var i = 0; i <this.rows*this.cols; i++) {
-
-            bgTile = cc.Sprite.create(preloaderRes.bg_png);
+            
+            bgTile = cc.Sprite.create(cc.spriteFrameCache.getSpriteFrame("bg.png"));
             
             var xpos = this.bgHalf + ((i % this.cols) * this.bgTileSize);
             var ypos = (g_scHeight - this.bgHalf) - (Math.floor(i / (this.rows + 1)) * this.bgTileSize);

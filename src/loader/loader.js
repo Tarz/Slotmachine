@@ -2,74 +2,51 @@
 
 var SlotMachinePreloader = cc.Scene.extend({
 
-	ctor: function() {
-		
-		this._super();
-		this.countVisuals = 0;
-	},
-
-    init: function() {
-    	
-    	this.mainLayer = cc.Layer.create();
+	 onEnter: function() {
+        
+        this._super();
+        
+        this.mainLayer = cc.Layer.create();
         this.addChild(this.mainLayer, 0);
 
+        //load and render preloader
+
         var preloader = this;
-    	
-    	// BACKGROUND
-    	cc.loader.loadImg(preloaderRes.bg_png, {isCrossOrigin : false }, function(err, img){
-    		
-    		preloader.backgroundLayer = new SMBackgroundLayer();
-        	preloader.backgroundLayer.init();
-        	preloader.mainLayer.addChild(preloader.backgroundLayer, 1);
-        	
-        	preloader.countVisuals++;
+
+        cc.loader.load(g_loaderResources, function() {}, function() {
+            preloader.createSceneUI();
+            preloader.startLoading();
         });
+    },
+    
+    createSceneUI: function() {
         
+        cc.spriteFrameCache.addSpriteFrames(preloaderRes.sheet_plist, preloaderRes.sheet_png);
+        
+        // BACKGROUND 
+        this.backgroundLayer = new SMBackgroundLayer();
+        this.backgroundLayer.init();
+        this.mainLayer.addChild(this.backgroundLayer, 1);
+
         // PROGRESSBAR BG
-        cc.loader.loadImg(preloaderRes.progBg_png, {isCrossOrigin : false }, function(err, img) {
-        	
-        	preloader.progressBg = cc.Sprite.create(img);
-       		preloader.progressBg.setPosition(g_scWidth * .5,g_scHeight * .5);
-        	preloader.mainLayer.addChild(preloader.progressBg, 2);
-        	
-        	preloader.countVisuals++;
-        });
+        this.progressBg = cc.Sprite.create(cc.spriteFrameCache.getSpriteFrame("progress_bg.png"));
+        this.progressBg.setPosition(g_scWidth * .5,g_scHeight * .5);
+        this.mainLayer.addChild(this.progressBg, 2);
 
         // PROGRESSBAR
-        cc.loader.loadImg(preloaderRes.prog_png, {isCrossOrigin : false }, function(err, img) {
-        	
-        	preloader.progressBar = cc.Sprite.create(img);
-        	preloader.progressBar.anchorX = 0;
-       		preloader.progressBar.setPosition(g_scWidth * .5 - 480 * .5, g_scHeight * .5);
-       		preloader.progressBar.scaleX = 0;
-        	preloader.mainLayer.addChild(preloader.progressBar, 3);
-
-        	 // PERCENT
-        	preloader.counter = cc.LabelTTF.create("0%", "Arial Black", "80");
-        	preloader.counter.setColor(new cc.Color(255,204,0))
-        	preloader.counter.setPosition(g_scWidth * .5,g_scHeight * .5 - 90);
-        	preloader.mainLayer.addChild(preloader.counter, 4);
-        	
-        	preloader.countVisuals++;
-        });
+        this.progressBar = cc.Sprite.create(cc.spriteFrameCache.getSpriteFrame("progress_fill.png"));
+        this.progressBar.anchorX = 0;
+        this.progressBar.setPosition(g_scWidth * .5 - 480 * .5, g_scHeight * .5);
+        this.progressBar.scaleX = 0;
+        this.mainLayer.addChild(this.progressBar, 3);
+        
+        // PERCENT
+        this.counter = cc.LabelTTF.create("0%", "Arial Black", "80");
+        this.counter.setColor(new cc.Color(255,204,0))
+        this.counter.setPosition(g_scWidth * .5,g_scHeight * .5 - 90);
+        this.mainLayer.addChild(this.counter, 4);
     },
-
-    onEnter: function() {
-    	
-    	this._super();
-    	this.init(); //load and render preloader
-      	this.schedule(this.waitVisuals);
-    },
-
-    waitVisuals: function(dt) {
-    	
-    	if(this.countVisuals === 3) {
-    		
-            this.unschedule(this.waitVisuals);
-    		this.startLoading();
-    	}
-    },
-
+    
     startLoading: function () {
     	
     	var preloader = this;
@@ -87,7 +64,7 @@ var SlotMachinePreloader = cc.Scene.extend({
             preloader.counter.setString(100 + "%");
         	preloader.progressBar.scaleX = 1;
         	
-            // Little delay to show 100% visuals
+            // Little delay to show "100%" visuals
             preloader.scheduleOnce( preloader.preloaded, .3 );
         });
     }, 
@@ -99,32 +76,35 @@ var SlotMachinePreloader = cc.Scene.extend({
 		this.cb = cb;
 	},
 
+    // Add game scene
     preloaded: function() {
         this.cb();
     },
 
+    // DESTROY
     onExit: function() {
     	
     	this._super();
     	
-    	this.mainLayer.removeChild(this.counter);
+        cc.spriteFrameCache.removeSpriteFrames();
+        cc.loader.release(preloaderRes.sheet_plist);
+        cc.loader.release(preloaderRes.sheet_png);
+    	
+        this.mainLayer.removeChild(this.counter);
     	delete this.counter;
     	
     	this.mainLayer.removeChild(this.progressBar);
     	delete this.progressBar;
-    	cc.loader.release(preloaderRes.prog_png);
+    	
     	
     	this.mainLayer.removeChild(this.progressBg);
     	delete this.progressBg;
-    	cc.loader.release(preloaderRes.progBg_png);
     	
-    	this.mainLayer.removeChild(this.backgroundLayer);
+        this.mainLayer.removeChild(this.backgroundLayer);
     	delete this.backgroundLayer;
     	
     	this.removeChild(this.mainLayer);
     	delete this.mainLayer;
-
-
     }
 });
 

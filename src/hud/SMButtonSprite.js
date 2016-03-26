@@ -5,7 +5,7 @@ var SMButton = cc.Sprite.extend({
     ctor: function() {
         
         this._super();
-        this.initWithFile(res.button_png);
+        this.initWithSpriteFrame(cc.spriteFrameCache.getSpriteFrame("button.png"));
     },
 
     onEnter: function() {

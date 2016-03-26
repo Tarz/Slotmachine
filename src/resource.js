@@ -1,17 +1,18 @@
 var preloaderRes = {
-     bg_png: "res/gameplay/bg.png"
-    ,progBg_png: "res/loader/progress_bg.png"
-    ,prog_png: "res/loader/progress_fill.png"
+     sheet_plist: "res/loaderSheet.plist"
+    ,sheet_png: "res/loaderSheet.png"
 };
 
+//Preloader scene resources
+var g_loaderResources = [];
+for ( var i in preloaderRes ) {
+    g_loaderResources.push(preloaderRes[i]);
+}
+
+
 var res = {
-      sheet_plist: "res/symbols/sheet.plist"
-    , sheet_png: "res/symbols/sheet.png"
-    , button_png: "res/gameplay/button.png"
-    , counter_png: "res/gameplay/counter.png"
-    , reel_png: "res/gameplay/reel.png"
-    , reelbg_png: "res/gameplay/reelbg.png"
-    , reelmask_png: "res/gameplay/reelmask.png"
+      sheet_plist: "res/sheet.plist"
+    , sheet_png: "res/sheet.png"
     , coins_sfx: "res/sfx/coins.wav"
     , spinEnd_sfx: "res/sfx/spin_end.wav"
     , spin_sfx: "res/sfx/spin.wav"
